@@ -29,7 +29,6 @@ export default function ChartCard({ title, data }) {
         fontWeight: '600',
         color: '#2c3e50'
       }}>
-        📊 {title}
       </h4>
       
       <ResponsiveContainer width="100%" height="85%">

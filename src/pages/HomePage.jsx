@@ -52,7 +52,6 @@ export default function HomePage() {
                             <p className="card-text">
                               <strong>Город:</strong> {plant.city}<br/>
                               <strong>Регион:</strong> {region.regionName}
-                              {/* ✅ УБРАН статус завода */}
                             </p>
                             <button 
                               className="btn btn-primary" 

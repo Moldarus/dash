@@ -121,7 +121,6 @@ export default function GroupedBarChart({ data }) {
               tick={false}
             />
             
-            {/* ✅ Tooltip: ТОЧНО как в RadarChart */}
             <Tooltip 
               contentStyle={{ 
                 background: '#fff', 
@@ -132,7 +131,7 @@ export default function GroupedBarChart({ data }) {
               }}
             />
             
-            {/* Столбец Самоаудит - СЕРЫЙ цвет + скруглённые углы */}
+            {/* Столбец Самоаудит*/}
             <Bar name="Самоаудит" dataKey="selfAudit" fill={COLORS.gray} barSize={60}>
               {chartData.map((entry, index) => (
                 <Cell 
@@ -150,7 +149,7 @@ export default function GroupedBarChart({ data }) {
               />
             </Bar>
             
-            {/* Столбец Аудит - Зелёный/Красный + скруглённые углы */}
+            {/*Столбец Аудит*/}
             <Bar name="Аудит" dataKey="audit" barSize={60}>
               {chartData.map((entry, index) => (
                 <Cell 

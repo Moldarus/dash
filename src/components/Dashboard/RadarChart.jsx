@@ -46,7 +46,6 @@ export default function RadarChartComponent({ data }) {
             <tspan x={x} dy="0">Подготовка</tspan>
             <tspan x={x} dy="22">производства</tspan>
           </text>
-          {/* Значение аудита - 80% ближе (с 25 до 5) */}
           <text
             x={x - 5}
             y={y + 35}
@@ -58,7 +57,6 @@ export default function RadarChartComponent({ data }) {
           >
             {audit.toFixed(2)}
           </text>
-          {/* Значение самоаудита - 80% ближе (с 25 до 5) */}
           <text
             x={x + 5}
             y={y + 35}
@@ -197,7 +195,6 @@ export default function RadarChartComponent({ data }) {
       );
     }
 
-    // Для остальных заголовков - одна строка
     return (
       <g key={`tick-${index}`}>
         <text
@@ -211,7 +208,6 @@ export default function RadarChartComponent({ data }) {
         >
           {label}
         </text>
-        {/* Значение аудита - 80% ближе */}
         <text
           x={x - 5}
           y={y + 20}
@@ -223,7 +219,6 @@ export default function RadarChartComponent({ data }) {
         >
           {audit.toFixed(2)}
         </text>
-        {/* Значение самоаудита - 80% ближе */}
         <text
           x={x + 5}
           y={y + 20}

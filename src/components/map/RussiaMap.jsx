@@ -54,18 +54,18 @@ export default function RussiaMap() {
               <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(44, 90, 160, 0.3)', animation: 'pulse 2s infinite', pointerEvents: 'none' }} />
               {/* Основная точка */}
               <div style={{ width: '20px', height: '20px', borderRadius: '50%', background: 'linear-gradient(135deg, #2c5aa0 0%, #1e40af 100%)', border: '4px solid #ffffff', boxShadow: '0 4px 12px rgba(44, 90, 160, 0.4)', transition: 'all 0.2s ease' }} />
-              {/* ✅ Подпись под точкой (уменьшенная) */}
+              {/* Подпись под точкой */}
               <div style={{ 
                 position: 'absolute',
                 top: '24px',
                 left: '50%',
                 transform: 'translateX(-50%)',
-                fontSize: '13px',  /* ✅ Было 13px → стало 10px */
-                fontWeight: '600', /* ✅ Было bold → стало 600 */
+                fontSize: '13px',
+                fontWeight: '600',
                 color: '#030303',
                 whiteSpace: 'nowrap',
                 background: 'rgba(255,255,255,0.9)',
-                padding: '2px 6px',  /* ✅ Было 4px 12px → стало 2px 6px */
+                padding: '2px 6px',
                 borderRadius: '4px',
                 border: '1px solid #2c5aa0',
                 pointerEvents: 'none',
