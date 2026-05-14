@@ -131,25 +131,6 @@ export default function GroupedBarChart({ data }) {
               }}
             />
             
-            {/* Столбец Самоаудит*/}
-            <Bar name="Самоаудит" dataKey="selfAudit" fill={COLORS.gray} barSize={60}>
-              {chartData.map((entry, index) => (
-                <Cell 
-                  key={`self-${index}`} 
-                  radius={[10, 10, 0, 0]}
-                />
-              ))}
-              <LabelList 
-                dataKey="selfAudit" 
-                position="top" 
-                fill={COLORS.darkBlue}
-                fontSize={20}
-                fontWeight={700}
-                formatter={(value) => value}
-              />
-            </Bar>
-            
-            {/*Столбец Аудит*/}
             <Bar name="Аудит" dataKey="audit" barSize={60}>
               {chartData.map((entry, index) => (
                 <Cell 
@@ -167,6 +148,23 @@ export default function GroupedBarChart({ data }) {
                 formatter={(value) => value}
               />
             </Bar>
+            
+            <Bar name="Самоаудит" dataKey="selfAudit" fill={COLORS.gray} barSize={60}>
+              {chartData.map((entry, index) => (
+                <Cell 
+                  key={`self-${index}`} 
+                  radius={[10, 10, 0, 0]}
+                />
+              ))}
+              <LabelList 
+                dataKey="selfAudit" 
+                position="top" 
+                fill={COLORS.darkBlue}
+                fontSize={20}
+                fontWeight={700}
+                formatter={(value) => value}
+              />
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -174,7 +172,7 @@ export default function GroupedBarChart({ data }) {
       <div className="legend-text" style={{ marginTop: '15px', textAlign: 'center', fontSize: '14px', fontWeight: '700' }}>
         <span style={{ color: COLORS.brightGreen }}>●</span> Аудит ≥ Самоаудита &nbsp;
         <span style={{ color: COLORS.brightRed }}>●</span> Аудит &lt; Самоаудита &nbsp;
-        <span style={{ color: COLORS.gray }}>●</span> Самоаудит
+        <span style={{ color: COLORS.gray }}>●</span> Самоаудит (серый)
       </div>
     </div>
   );

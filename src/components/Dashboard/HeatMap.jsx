@@ -10,7 +10,7 @@ export default function HeatMap({ data }) {
     black: '#000000',
     darkBlue: '#1a3a5c',
     brightGreen: '#92D050',
-    brightRed: '#ED1D24',
+    brightRed: '#C0504D',
     lightBlue: '#e3f2fd'
   };
 
