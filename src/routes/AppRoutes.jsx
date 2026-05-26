@@ -3,18 +3,17 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import HomePage from '../pages/HomePage';
 import DashboardPage from '../pages/DashboardPage';
+import PrintPage from '../pages/PrintPage';
+import RatingPage from '../pages/RatingPage';
 import NotFoundPage from '../pages/NotFoundPage';
 
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* Главная страница */}
       <Route path="/" element={<HomePage />} />
-      
-      {/* Страница дашборда */}
       <Route path="/dashboard" element={<DashboardPage />} />
-      
-      {/*Catch-all маршрут для всех несуществующих страниц */}
+      <Route path="/print" element={<PrintPage />} />
+      <Route path="/rating" element={<RatingPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

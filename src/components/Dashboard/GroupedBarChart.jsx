@@ -1,68 +1,85 @@
 // src/components/Dashboard/GroupedBarChart.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, LabelList } from 'recharts';
 import '../../pages/DashboardPage.css';
 
-export default function GroupedBarChart({ data }) {
+export default function GroupedBarChart({ data, isPrintMode = false }) {
+  const [isPrinting, setIsPrinting] = useState(false);
+
+  useEffect(() => {
+    const beforePrint = () => setIsPrinting(true);
+    const afterPrint = () => setIsPrinting(false);
+
+    window.addEventListener('beforeprint', beforePrint);
+    window.addEventListener('afterprint', afterPrint);
+
+    return () => {
+      window.removeEventListener('beforeprint', beforePrint);
+      window.removeEventListener('afterprint', afterPrint);
+    };
+  }, []);
+
+  const printMode = isPrintMode || isPrinting;
+
   const COLORS = {
     brightGreen: '#92D050',
     brightRed: '#C0504D',
     darkBlue: '#1a3a5c',
-    lightBlue: '#e3f2fd',
-    gray: '#6c757d'
+    darkGray: '#6c757d',
+    white: '#ffffff'
   };
 
   const renderCustomizedXAxisTick = (props) => {
     const { x, y, payload } = props;
     const label = payload.value;
-    
+
     if (label === 'Подготовка производства') {
       return (
         <g>
-          <text x={x} y={y} dy={15} textAnchor="middle" fill={COLORS.darkBlue} fontSize="18" fontWeight="700">
+          <text x={x} y={y} dy={15} textAnchor="middle" fill={COLORS.darkBlue} fontSize={printMode ? "14" : "11"} fontWeight="700">
             <tspan x={x} dy="0">Подготовка</tspan>
-            <tspan x={x} dy="22">производства</tspan>
+            <tspan x={x} dy={printMode ? "18" : "14"}>производства</tspan>
           </text>
         </g>
       );
     }
-    
+
     if (label === 'SF-m Ручные операции') {
       return (
         <g>
-          <text x={x} y={y} dy={15} textAnchor="middle" fill={COLORS.darkBlue} fontSize="18" fontWeight="700">
+          <text x={x} y={y} dy={15} textAnchor="middle" fill={COLORS.darkBlue} fontSize={printMode ? "14" : "11"} fontWeight="700">
             <tspan x={x} dy="0">SF-m Ручные</tspan>
-            <tspan x={x} dy="22">операции</tspan>
+            <tspan x={x} dy={printMode ? "18" : "14"}>операции</tspan>
           </text>
         </g>
       );
     }
-    
+
     if (label === 'Техническое развитие') {
       return (
         <g>
-          <text x={x} y={y} dy={15} textAnchor="middle" fill={COLORS.darkBlue} fontSize="18" fontWeight="700">
+          <text x={x} y={y} dy={15} textAnchor="middle" fill={COLORS.darkBlue} fontSize={printMode ? "14" : "11"} fontWeight="700">
             <tspan x={x} dy="0">Техническое</tspan>
-            <tspan x={x} dy="22">развитие</tspan>
+            <tspan x={x} dy={printMode ? "18" : "14"}>развитие</tspan>
           </text>
         </g>
       );
     }
-    
+
     if (label === 'Цепочка поставок') {
       return (
         <g>
-          <text x={x} y={y} dy={15} textAnchor="middle" fill={COLORS.darkBlue} fontSize="18" fontWeight="700">
+          <text x={x} y={y} dy={15} textAnchor="middle" fill={COLORS.darkBlue} fontSize={printMode ? "14" : "11"} fontWeight="700">
             <tspan x={x} dy="0">Цепочка</tspan>
-            <tspan x={x} dy="22">поставок</tspan>
+            <tspan x={x} dy={printMode ? "18" : "14"}>поставок</tspan>
           </text>
         </g>
       );
     }
-    
+
     return (
       <g>
-        <text x={x} y={y} dy={15} textAnchor="middle" fill={COLORS.darkBlue} fontSize="18" fontWeight="700">
+        <text x={x} y={y} dy={15} textAnchor="middle" fill={COLORS.darkBlue} fontSize={printMode ? "14" : "11"} fontWeight="700">
           {label}
         </text>
       </g>
@@ -72,7 +89,7 @@ export default function GroupedBarChart({ data }) {
   const chartData = data.map((item) => {
     const selfAudit = item.selfAuditCount || 0;
     const audit = item.auditCount || 0;
-    
+
     return {
       name: item.name,
       selfAudit: selfAudit,
@@ -82,97 +99,178 @@ export default function GroupedBarChart({ data }) {
   });
 
   return (
-    <div style={{ 
-      width: '100%', 
-      height: '650px',
-      background: '#ffffff', 
-      borderRadius: '12px', 
-      padding: '20px', 
-      border: '1px solid #dee2e6' 
+    <div style={{
+      width: '100%',
+      height: printMode ? '700px' : '500px',
+      background: COLORS.white,
+      borderRadius: '12px',
+      padding: printMode ? '25px' : '15px',
+      border: `1px solid ${COLORS.darkBlue}`,
+      display: 'flex',
+      flexDirection: 'column',
+      boxSizing: 'border-box'
     }}>
-      <h4 className="chart-title" style={{ margin: '0 0 15px 0', fontSize: '18px', fontWeight: '700', color: COLORS.darkBlue }}>
+      <h4 className="chart-title" style={{
+        margin: '0 0 15px 0',
+        fontSize: printMode ? '22px' : '16px',
+        fontWeight: '700',
+        color: COLORS.darkBlue,
+        textAlign: 'center'
+      }}>
         Сравнение закрытых мероприятий
       </h4>
-      
-      <div style={{ height: 'calc(100% - 60px)', minHeight: '300px' }}>
+
+      <div style={{ flex: 1, minHeight: 0 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart 
-            data={chartData} 
-            margin={{ top: 40, right: 30, left: 10, bottom: 80 }}
+          <BarChart
+            data={chartData}
+            margin={{ top: 40, right: 30, left: 10, bottom: 90 }}
             barGap={12}
-            barSize={60}
+            barSize={printMode ? 55 : 40}
           >
-            <CartesianGrid stroke="none" />
-            
-            <XAxis 
-              dataKey="name" 
+            <CartesianGrid stroke="#e0e0e0" strokeDasharray="3 3" />
+
+            <XAxis
+              dataKey="name"
               angle={0}
               interval={0}
               height={100}
               tick={renderCustomizedXAxisTick}
-              tickMargin={10}
-              axisLine={{ stroke: '#dee2e6', strokeWidth: 1 }}
+              tickMargin={15}
+              axisLine={{ stroke: COLORS.darkBlue, strokeWidth: 1 }}
               tickLine={false}
             />
-            
-            <YAxis 
+
+            <YAxis
               axisLine={false}
               tickLine={false}
-              tick={false}
+              tick={{ fill: COLORS.darkBlue, fontSize: printMode ? '14' : '11' }}
+              allowDecimals={false}
+              domain={[0, 'auto']}
             />
-            
-            <Tooltip 
-              contentStyle={{ 
-                background: '#fff', 
-                border: '1px solid #dee2e6', 
+
+            <Tooltip
+              contentStyle={{
+                background: COLORS.white,
+                border: `1px solid ${COLORS.darkBlue}`,
                 borderRadius: '8px',
-                fontSize: '18px',
-                fontFamily: "'Magistral Black', 'Arial', sans-serif"
+                fontSize: printMode ? '14px' : '11px'
+              }}
+              formatter={(value, name) => {
+                if (name === 'Аудит') return [value, 'Аудит'];
+                if (name === 'Самоаудит') return [value, 'Самоаудит'];
+                return [value, name];
               }}
             />
-            
-            <Bar name="Аудит" dataKey="audit" barSize={60}>
+
+            {/* Столбцы аудита */}
+            <Bar
+              name="Аудит"
+              dataKey="audit"
+              barSize={printMode ? 55 : 40}
+              shape={(props) => {
+                const { fill, x, y, width, height } = props;
+                const radius = 8;
+                return (
+                  <path
+                    d={`
+                      M ${x + radius}, ${y}
+                      L ${x + width - radius}, ${y}
+                      Q ${x + width}, ${y} ${x + width}, ${y + radius}
+                      L ${x + width}, ${y + height}
+                      L ${x}, ${y + height}
+                      L ${x}, ${y + radius}
+                      Q ${x}, ${y} ${x + radius}, ${y}
+                      Z
+                    `}
+                    fill={fill}
+                    stroke="none"
+                  />
+                );
+              }}
+            >
               {chartData.map((entry, index) => (
-                <Cell 
-                  key={`audit-${index}`} 
+                <Cell
+                  key={`audit-${index}`}
                   fill={entry.auditColor}
-                  radius={[10, 10, 0, 0]}
                 />
               ))}
-              <LabelList 
-                dataKey="audit" 
-                position="top" 
+              <LabelList
+                dataKey="audit"
+                position="top"
                 fill={COLORS.darkBlue}
-                fontSize={20}
+                fontSize={printMode ? 18 : 12}
                 fontWeight={700}
                 formatter={(value) => value}
+                offset={5}
               />
             </Bar>
-            
-            <Bar name="Самоаудит" dataKey="selfAudit" fill={COLORS.gray} barSize={60}>
-              {chartData.map((entry, index) => (
-                <Cell 
-                  key={`self-${index}`} 
-                  radius={[10, 10, 0, 0]}
-                />
-              ))}
-              <LabelList 
-                dataKey="selfAudit" 
-                position="top" 
+
+            {/* Столбцы самоаудита */}
+            <Bar
+              name="Самоаудит"
+              dataKey="selfAudit"
+              fill={COLORS.darkGray}
+              barSize={printMode ? 55 : 40}
+              shape={(props) => {
+                const { x, y, width, height } = props;
+                const radius = 8;
+                return (
+                  <path
+                    d={`
+                      M ${x + radius}, ${y}
+                      L ${x + width - radius}, ${y}
+                      Q ${x + width}, ${y} ${x + width}, ${y + radius}
+                      L ${x + width}, ${y + height}
+                      L ${x}, ${y + height}
+                      L ${x}, ${y + radius}
+                      Q ${x}, ${y} ${x + radius}, ${y}
+                      Z
+                    `}
+                    fill={COLORS.darkGray}
+                    stroke="none"
+                  />
+                );
+              }}
+            >
+              <LabelList
+                dataKey="selfAudit"
+                position="top"
                 fill={COLORS.darkBlue}
-                fontSize={20}
+                fontSize={printMode ? 18 : 12}
                 fontWeight={700}
                 formatter={(value) => value}
+                offset={5}
               />
             </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
-      
-      <div className="legend-text" style={{ marginTop: '15px', textAlign: 'center', fontSize: '14px', fontWeight: '700' }}>
-        <span style={{ color: COLORS.brightGreen }}>●</span> Аудит ≥ Самоаудита &nbsp;
-        <span style={{ color: COLORS.brightRed }}>●</span> Аудит &lt; Самоаудита &nbsp;
-        <span style={{ color: COLORS.gray }}>●</span> Самоаудит (серый)
+
+      {/* Легенда */}
+      <div style={{
+        marginTop: '15px',
+        paddingTop: '12px',
+        paddingBottom: '5px',
+        borderTop: `1px solid ${COLORS.darkBlue}`,
+        display: 'flex',
+        justifyContent: 'center',
+        gap: '30px',
+        flexWrap: 'wrap',
+        flexShrink: 0
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ width: '18px', height: '18px', backgroundColor: COLORS.brightGreen, borderRadius: '4px' }}></div>
+          <span style={{ color: COLORS.darkBlue, fontSize: printMode ? '14px' : '12px', fontWeight: '600' }}>Аудит ≥ Самоаудита</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ width: '18px', height: '18px', backgroundColor: COLORS.brightRed, borderRadius: '4px' }}></div>
+          <span style={{ color: COLORS.darkBlue, fontSize: printMode ? '14px' : '12px', fontWeight: '600' }}>Аудит &lt; Самоаудита</span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ width: '18px', height: '18px', backgroundColor: COLORS.darkGray, borderRadius: '4px' }}></div>
+          <span style={{ color: COLORS.darkBlue, fontSize: printMode ? '14px' : '12px', fontWeight: '600' }}>Самоаудит</span>
+        </div>
       </div>
     </div>
   );

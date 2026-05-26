@@ -17,19 +17,19 @@ const auditDataSchema = {
 
 const validateAuditData = ajv.compile(auditDataSchema);
 
-// Подсчёт количества true в JSON
+// Подсчёт количества true в JSON по разделам
 function countTrueValues(dataObj) {
   if (!dataObj) return { data_count: [] };
-  
+
   const result = [];
- 
+
   for (const [sectionName, sectionData] of Object.entries(dataObj)) {
     let sectionTrueCount = 0;
     const categories = [];
-    
+
     for (const [catName, catData] of Object.entries(sectionData)) {
       let catTrueCount = 0;
-      
+
       for (const [levelName, levelData] of Object.entries(catData)) {
         for (const [taskKey, taskValue] of Object.entries(levelData)) {
           if (taskValue === true) {
@@ -38,20 +38,20 @@ function countTrueValues(dataObj) {
           }
         }
       }
-      
+
       categories.push({
         name: catName,
         trueCount: catTrueCount
       });
     }
-    
+
     result.push({
       name: sectionName,
       trueCount: sectionTrueCount,
       categories: categories
     });
   }
-  
+
   return { data_count: result };
 }
 
@@ -61,22 +61,22 @@ export const auditApi = {
       if (!auditFilePath) {
         throw new Error('Не указан путь к файлу аудита (auditFilePath)');
       }
-      
+
       console.log('📥 auditApi: Загружаем файл:', auditFilePath);
-      
+
       const response = await fetch(auditFilePath);
       if (!response.ok) {
         throw new Error(`Не удалось загрузить ${auditFilePath} (статус: ${response.status})`);
       }
-      
+
       const data = await response.json();
-      
+
       const valid = validateAuditData(data);
       if (!valid) {
         console.error('Ошибка валидации:', validateAuditData.errors);
         throw new Error('Данные не прошли валидацию AJV');
       }
-      
+
       console.log('auditApi: Данные загружены и валидированы');
       return data;
     } catch (error) {
@@ -88,13 +88,13 @@ export const auditApi = {
   async getChartData(auditFilePath) {
     try {
       const auditData = await this.loadAuditData(auditFilePath);
-      
+
       const selfAuditData = countByFormulaTotal(auditData.results, auditData.coefficients);
       const auditDataProcessed = countByFormulaTotal(auditData.esteem_results, auditData.coefficients);
 
       const chartData = selfAuditData.data_count.map((item, index) => {
         const auditItem = auditDataProcessed.data_count[index];
-        
+
         return {
           name: item.name,
           value1: parseFloat(item.value) || 0,
@@ -102,10 +102,10 @@ export const auditApi = {
         };
       });
 
-      const summaryValue = typeof selfAuditData.summary === 'number' 
-        ? selfAuditData.summary 
+      const summaryValue = typeof selfAuditData.summary === 'number'
+        ? selfAuditData.summary
         : parseFloat(selfAuditData.summary) || 0;
-      
+
       const esteemSummaryValue = typeof auditDataProcessed.summary === 'number'
         ? auditDataProcessed.summary
         : parseFloat(auditDataProcessed.summary) || 0;
@@ -124,13 +124,13 @@ export const auditApi = {
   async getTableData(auditFilePath) {
     try {
       const auditData = await this.loadAuditData(auditFilePath);
-      
+
       const selfAuditData = countByFormulaTotal(auditData.results, auditData.coefficients);
       const auditDataProcessed = countByFormulaTotal(auditData.esteem_results, auditData.coefficients);
 
       return selfAuditData.data_count.map((item, index) => {
         const auditItem = auditDataProcessed.data_count[index];
-        
+
         return {
           sectionName: item.name,
           sectionValue1: parseFloat(item.value) || 0,
@@ -138,11 +138,40 @@ export const auditApi = {
           coefficient: auditData.coefficients[item.name] || 0,
           categories: Object.entries(item.category_scors || {}).map(([catName, catScore]) => {
             const auditCatScore = auditItem?.category_scors?.[catName];
-            
+
+            let selfTrueCount = 0;
+            let auditTrueCount = 0;
+            let totalQuestions = 0;
+
+            const selfCatData = auditData.results?.[item.name]?.[catName];
+            const auditCatData = auditData.esteem_results?.[item.name]?.[catName];
+
+            // Считаем общее количество вопросов и true в самооценке
+            if (selfCatData) {
+              for (const [levelName, levelData] of Object.entries(selfCatData)) {
+                for (const [taskKey, taskValue] of Object.entries(levelData)) {
+                  totalQuestions++;
+                  if (taskValue === true) selfTrueCount++;
+                }
+              }
+            }
+
+            // Считаем true в аудите
+            if (auditCatData) {
+              for (const [levelName, levelData] of Object.entries(auditCatData)) {
+                for (const [taskKey, taskValue] of Object.entries(levelData)) {
+                  if (taskValue === true) auditTrueCount++;
+                }
+              }
+            }
+
             return {
               name: catName,
               value: parseFloat(catScore) || 0,
-              auditValue: auditCatScore ? parseFloat(auditCatScore) || 0 : 0
+              auditValue: auditCatScore ? parseFloat(auditCatScore) || 0 : 0,
+              trueCount: selfTrueCount,
+              auditCount: auditTrueCount,
+              totalQuestions: totalQuestions
             };
           }),
           isOpen: false
