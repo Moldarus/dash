@@ -12,8 +12,9 @@ export default function HeatMapVertical({ data, hideLegend = false }) {
     lightBlue: '#e3f2fd'
   };
 
+  // НОВОЕ ПРАВИЛО: зелёный если аудит >= самооценки (включая равенство)
   const getHeatMapColor = (selfAudit, audit) => {
-    if (audit >= selfAudit && audit !== selfAudit) return COLORS.brightGreen;
+    if (audit >= selfAudit) return COLORS.brightGreen;
     if (audit < selfAudit) return COLORS.brightRed;
     return COLORS.lightBlue;
   };
