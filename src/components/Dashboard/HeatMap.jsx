@@ -163,7 +163,6 @@ export default function HeatMap({ data, onCategoryClick, hideLegend = false }) {
           marginBottom: '30px'
         }}
       >
-        <i className="fas fa-fire me-2"></i>
         Тепловая карта результатов аудита
       </Card.Header>
       <Card.Body className="p-0">

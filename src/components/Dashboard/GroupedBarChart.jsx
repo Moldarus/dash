@@ -128,7 +128,7 @@ export default function GroupedBarChart({ data, isPrintMode = false }) {
             barGap={12}
             barSize={printMode ? 55 : 40}
           >
-            <CartesianGrid stroke="#e0e0e0" strokeDasharray="3 3" />
+            <CartesianGrid stroke="#e0e0e0" strokeDasharray="3 3" horizontal={true} vertical={false} />
 
             <XAxis
               dataKey="name"
@@ -141,13 +141,8 @@ export default function GroupedBarChart({ data, isPrintMode = false }) {
               tickLine={false}
             />
 
-            <YAxis
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: COLORS.darkBlue, fontSize: printMode ? '14' : '11' }}
-              allowDecimals={false}
-              domain={[0, 'auto']}
-            />
+            {/* YAxis полностью скрыт */}
+            <YAxis hide={true} />
 
             <Tooltip
               contentStyle={{
